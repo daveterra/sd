@@ -169,9 +169,7 @@ __sd_new() {
 
   chmod +x "$script"
 
-  if [[ -z "$body" ]]; then
-    __sd_edit "$script"
-  fi
+  __sd_edit "$script"
 }
 
 __sd_new_user_help() {

@@ -214,7 +214,37 @@ Note that you cannot invoke "recursive `sd`" (that is, write scripts that themse
 
 ## Installation as a regular script
 
-`sd` is not currently packaged in any package manager that I am aware of, but it should be pretty easy if you want to package it for your distribution. It's just a single script and a single completion file. Until that day:
+## Using Nix
+
+As far as I know, [Nix](https://search.nixos.org/packages?channel=unstable&query=script-directory) is the only package manager with `sd` pre-packaged (as `nixpkgs.service-directory`).
+
+`sd` is also [available in home manager](https://github.com/nix-community/home-manager/blob/master/modules/programs/script-directory.nix). You can install it by adding something like this to your `~/.config/home-manager/home.nix`:
+
+```nix
+{...}: {
+  home.programs.script-directory = {
+    script-directory = {
+      enable = true;
+      settings = {
+        # SD_ROOT = "${config.home.homeDirectory}/custom-script-directory";
+        # SD_EDITOR = "vim";
+        # SD_CAT = "bat";
+      };
+    };
+  };
+  
+  home.programs.zsh = {
+    # The script-directory module doesn't automatically configure
+    # zsh completion, so we still have manually add this:
+  
+    initExtra = ''
+    fpath+="${pkgs.script-directory}/share/zsh/site-functions"
+    '';
+  };
+}
+```
+
+## Without a package manager
 
 1. Put the `sd` script somewhere on your `PATH`.
 2. Put the `_sd` completion script somewhere on your `fpath`.
@@ -238,7 +268,7 @@ Note that changes you make to your `~/.zshrc` will only take effect for *future*
     $ fpath=(~/src/sd $fpath)
     $ compinit
 
-## Installation as a shell function
+## As a shell function
 
 You can just source `sd` in your `.zshrc` and set up completion manually (as described [above](#installation-as-a-regular-script)), but `sd` is designed to be compatible with shell plugin managers.
 
@@ -270,6 +300,7 @@ source "$ZSH/oh-my-zsh.sh"
 Patrick Jackson contributed [an unofficial fish completion script](https://gist.github.com/patricksjackson/5065e4a9d8e825dafc7824112f17a5e6), which should be usable with some modification (as written it does not respect `SD_ROOT`, but it should act as a very good starting point if you use fish).
 
 Bash doesn't support the fancy completion-with-description feature that is sort of the whole point of `sd`, but there are apparently ways to hack something similar.
+
 
 # Changelog
 
